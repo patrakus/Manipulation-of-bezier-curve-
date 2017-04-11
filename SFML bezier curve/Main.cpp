@@ -1,46 +1,33 @@
 #include <SFML/Graphics.hpp>
 #include "StandardCursor.hpp"
 #include <iostream>
+#include "Mouse.hpp"
+
+float test(float value, float min, float max);
 
 int main()
 {
-	int choice = 0;
-	while (choice != 1 && choice != 2 && choice != 3 && choice != 4)
-	{
-		std::cout << "1. Change cursor to Wait." << std::endl;
-		std::cout << "2. Change cursor to Text." << std::endl;
-		std::cout << "3. Change cursor to Normal." << std::endl;
-		std::cout << "4. Change cursor to Hand." << std::endl;
-		std::cin >> choice;
-	}
-
 	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
 
-	if (choice == 1)
-	{
-		sf::StandardCursor Cursor(sf::StandardCursor::WAIT);
-		Cursor.set(window.getSystemHandle());
-	}
-	else if (choice == 2)
-	{
-		sf::StandardCursor Cursor(sf::StandardCursor::TEXT);
-		Cursor.set(window.getSystemHandle());
-	}
-	else if (choice == 3)
-	{
-		sf::StandardCursor Cursor(sf::StandardCursor::NORMAL);
-		Cursor.set(window.getSystemHandle());
-	}
-	else
-	{
-		sf::StandardCursor Cursor(sf::StandardCursor::HAND);
-		Cursor.set(window.getSystemHandle());
-	}
 
 	sf::CircleShape shape(100.f);
 	shape.setFillColor(sf::Color::Green);
 
 	sf::View fixed = window.getView();
+	
+	fixed.move(-400.f, -300.f);
+
+	window.setView(fixed);
+
+	std::cout << fixed.getCenter().x;
+	
+	sf::Transform viewTransform = fixed.getTransform();
+	
+	sf::Vertex dot(sf::Vector2f(0.f, 0.f), sf::Color::Red);
+	
+	sf::Mouse::setPosition(sf::Vector2i(400, 300), window);
+
+	sf::Vector2f* mousePos;
 
 	while (window.isOpen())
 	{
@@ -49,10 +36,23 @@ int main()
 		{
 			if (event.type == sf::Event::Closed)
 				window.close();
+
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				/*std::cout << sf::Mouse::getPosition(window).x << " " <<
+					sf::Mouse::getPosition(window).y << std::endl;*/
+				mousePos = &bzc::Mouse::viewToWorldSpace(sf::Mouse::getPosition(window),
+					fixed.getTransform(), window);
+				
+				std::cout <<"x: " <<mousePos->x << " y:" << mousePos->y<< std::endl;
+				std::cout << std::endl;
+			}
+				
 		}
 
 		window.clear();
 		window.draw(shape);
+		window.draw(&dot, 1, sf::Points);
 		window.display();
 	}
 

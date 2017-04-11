@@ -20,9 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="StandardCursor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Mouse.hpp" />
     <ClInclude Include="StandardCursor.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
