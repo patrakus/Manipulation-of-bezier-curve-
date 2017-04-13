@@ -2,35 +2,40 @@
 #include "StandardCursor.hpp"
 #include <iostream>
 #include "Mouse.hpp"
-
-float test(float value, float min, float max);
+#include "BezierCurve.hpp"
 
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
-
-
 	sf::CircleShape shape(100.f);
 	shape.setFillColor(sf::Color::Green);
 
 	sf::View fixed = window.getView();
-	
 	fixed.move(-400.f, -300.f);
-
 	window.setView(fixed);
 
-	std::cout << fixed.getCenter().x;
-	
-	sf::Transform viewTransform = fixed.getTransform();
-	
-	sf::Vertex dot(sf::Vector2f(0.f, 0.f), sf::Color::Red);
-	
-	sf::Mouse::setPosition(sf::Vector2i(400, 300), window);
+	sf::Vector2f pointsSample[3] = { { 0.f, 0.f }, { -100.f, -100.f }, { 100.f, -100.f } };
+
+	bzc::Bezier bezier;
+	bezier.setControlPoints(pointsSample, 3);
+	bezier.setCurveResolution(20);
+
+	bezier.update();
+
+	sf::Vertex* points = bezier.getVertices();
+	unsigned int curveResolution = bezier.getResolution();
 
 	sf::Vector2f* mousePos;
 
+	sf::Clock timer;
+	float deltaTime;
+
+	float speed = 10000.f;
+
 	while (window.isOpen())
 	{
+		deltaTime = timer.restart().asSeconds();
+
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -40,21 +45,29 @@ int main()
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
 				/*std::cout << sf::Mouse::getPosition(window).x << " " <<
-					sf::Mouse::getPosition(window).y << std::endl;*/
+					sf::Mouse::getPosition(window).y << std::endl;*/ // ---> sprawdziæ w kodzie api ró¿nice
 				mousePos = &bzc::Mouse::viewToWorldSpace(sf::Mouse::getPosition(window),
 					fixed.getTransform(), window);
 				
-				std::cout <<"x: " <<mousePos->x << " y:" << mousePos->y<< std::endl;
+				//std::cout <<"Autorka konwersja wynosi " << "x: " <<mousePos->x << " y:" << mousePos->y<< std::endl;
 				std::cout << std::endl;
+				std::cout << "Wersja dostarczona przez api wynosi x:" <<
+					window.mapPixelToCoords(sf::Mouse::getPosition()).x << " y:" <<
+					window.mapPixelToCoords(sf::Mouse::getPosition()).y << std::endl;
 			}
-				
+
+			window.setView(fixed);
 		}
 
 		window.clear();
 		window.draw(shape);
-		window.draw(&dot, 1, sf::Points);
+		window.draw(points,curveResolution, sf::LineStrip);
 		window.display();
 	}
 
 	return 0;
 }
+
+
+// zamieniæ to rownanie w bezierze na lerp
+// zrobiæ poprawnie dzia³aj¹ce przemieszczenie za pomoc¹ deltaTime
