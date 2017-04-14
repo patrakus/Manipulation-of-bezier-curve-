@@ -14,7 +14,7 @@ namespace bzc
 		void update();
 		sf::Vertex* getVertices() const
 		{
-			return vertices;
+			return _vertices;
 		}
 
 		unsigned int getResolution() const
@@ -29,8 +29,8 @@ namespace bzc
 		}
 
 	private:
-		sf::Vertex* vertices;
-		sf::Vector2f* controlPoints;
+		sf::Vertex* _vertices;
+		sf::Vector2f* _controlPoints;
 		unsigned int _resolution;
 
 		void calculateCurve();

@@ -3,8 +3,8 @@
 
 bzc::Bezier::Bezier() : _resolution(8)
 {
-	vertices = nullptr;
-	controlPoints = new sf::Vector2f[3]{ { -100.f, 0.f },{ -100.f, -100.f },
+	_vertices = nullptr;
+	_controlPoints = new sf::Vector2f[3]{ { -100.f, 0.f },{ -100.f, -100.f },
 	{ 100.f, -100.f } };
 }
 
@@ -15,8 +15,8 @@ bzc::Bezier::Bezier(unsigned int curveResolution) : _resolution(curveResolution)
 
 bzc::Bezier::~Bezier()
 {
-		delete vertices;
-		delete controlPoints;
+		delete _vertices;
+		delete _controlPoints;
 }
 
 void bzc::Bezier::update()
@@ -28,15 +28,18 @@ void bzc::Bezier::update()
 
 void bzc::Bezier::setControlPoints(const sf::Vector2f* points, const unsigned int size)
 {
-	if (controlPoints != nullptr)
+	if (_controlPoints != nullptr)
 	{
-		delete controlPoints;
-		controlPoints = nullptr;
+		delete _controlPoints;
+		_controlPoints = nullptr;
 	}
 
 	createControlPoints(size);
 	copyPoints(points, size);
 }
+
+//****************************************private*******************************************
+//******************************************************************************************
 
 void bzc::Bezier::calculateCurve()
 {
@@ -45,12 +48,12 @@ void bzc::Bezier::calculateCurve()
 		sf::Vector2f verticePos;
 		float temp = normalization(static_cast<float>(i));
 
-		verticePos.x = ((1 - temp)*(1 - temp))*controlPoints[0].x + 2 * (1 - temp)*temp*controlPoints[1].x +
-			temp*temp*controlPoints[2].x;
-		verticePos.y = ((1 - temp)*(1 - temp))*controlPoints[0].y + 2 * (1 - temp)*temp*controlPoints[1].y +
-			temp*temp*controlPoints[2].y;
+		verticePos.x = ((1 - temp)*(1 - temp))*_controlPoints[0].x + 2 * (1 - temp)*temp*_controlPoints[1].x +
+			temp*temp*_controlPoints[2].x;
+		verticePos.y = ((1 - temp)*(1 - temp))*_controlPoints[0].y + 2 * (1 - temp)*temp*_controlPoints[1].y +
+			temp*temp*_controlPoints[2].y;
 
-		vertices[i].position = verticePos;
+		_vertices[i].position = verticePos;
 	}
 }
 
@@ -58,15 +61,15 @@ void bzc::Bezier::setColor()
 {
 	for (unsigned int i = 0; i < _resolution; i++)
 	{
-		vertices[i].color = sf::Color::Red;
+		_vertices[i].color = sf::Color::Red;
 	}
 }
 
 void bzc::Bezier::createControlPoints(const unsigned int size)
 {
-	if (controlPoints == nullptr)
+	if (_controlPoints == nullptr)
 	{
-		controlPoints = new sf::Vector2f[size];
+		_controlPoints = new sf::Vector2f[size];
 	}
 }
 
@@ -75,16 +78,16 @@ void bzc::Bezier::copyPoints(const sf::Vector2f* points, const unsigned int size
 
 	for (unsigned int i = 0; i < size; i++)
 	{
-		controlPoints[i] = points[i];
+		_controlPoints[i] = points[i];
 	}
 }
 
 void bzc::Bezier::createVertices()
 {
-	if (vertices != nullptr)
+	if (_vertices != nullptr)
 	{
-		delete vertices;
+		delete _vertices;
 	}
 
-	vertices = new sf::Vertex[_resolution];
+	_vertices = new sf::Vertex[_resolution];
 }

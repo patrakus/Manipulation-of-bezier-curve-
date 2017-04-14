@@ -68,6 +68,5 @@ int main()
 	return 0;
 }
 
-
 // zamieniæ to rownanie w bezierze na lerp
 // zrobiæ poprawnie dzia³aj¹ce przemieszczenie za pomoc¹ deltaTime
