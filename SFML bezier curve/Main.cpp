@@ -3,6 +3,9 @@
 #include <iostream>
 #include "Mouse.hpp"
 #include "BezierCurve.hpp"
+#include "FPS.hpp"
+#include "ShapeHandler.hpp"
+#include <math.h>
 
 int main()
 {
@@ -17,7 +20,7 @@ int main()
 	sf::Vector2f pointsSample[3] = { { 0.f, 0.f }, { -100.f, -100.f }, { 100.f, -100.f } };
 
 	bzc::Bezier bezier;
-	bezier.setControlPoints(pointsSample, 3);
+	//bezier.setControlPoints(pointsSample, 3);
 	bezier.setCurveResolution(20);
 
 	bezier.update();
@@ -27,14 +30,12 @@ int main()
 
 	sf::Vector2f* mousePos;
 
-	sf::Clock timer;
-	float deltaTime;
-
-	float speed = 10000.f;
+	bzc::ShapeHandler shapeHandler;
+	shapeHandler.setLine(pointsSample[0], pointsSample[1]);
+	shapeHandler.setCircleHandler(pointsSample[1]);
 
 	while (window.isOpen())
 	{
-		deltaTime = timer.restart().asSeconds();
 
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -46,27 +47,44 @@ int main()
 			{
 				/*std::cout << sf::Mouse::getPosition(window).x << " " <<
 					sf::Mouse::getPosition(window).y << std::endl;*/ // ---> sprawdziæ w kodzie api ró¿nice
-				mousePos = &bzc::Mouse::viewToWorldSpace(sf::Mouse::getPosition(window),
-					fixed.getTransform(), window);
+
 				
 				//std::cout <<"Autorka konwersja wynosi " << "x: " <<mousePos->x << " y:" << mousePos->y<< std::endl;
-				std::cout << std::endl;
-				std::cout << "Wersja dostarczona przez api wynosi x:" <<
+				//std::cout << std::endl;
+				/*std::cout << "Wersja dostarczona przez api wynosi x:" <<
 					window.mapPixelToCoords(sf::Mouse::getPosition()).x << " y:" <<
-					window.mapPixelToCoords(sf::Mouse::getPosition()).y << std::endl;
+					window.mapPixelToCoords(sf::Mouse::getPosition()).y << std::endl;*/
 			}
 
-			window.setView(fixed);
+			mousePos = &bzc::Mouse::viewToWorldSpace(sf::Mouse::getPosition(window),
+				fixed.getTransform(), window);
+
+			sf::Vector2f mousePosFromHandler = *mousePos - shapeHandler.getPosition();
+
+			float radiusFromHandler = mousePosFromHandler.x * mousePosFromHandler.x +
+				mousePosFromHandler.y * mousePosFromHandler.y;
+
+			if (event.type == sf::Event::MouseButtonPressed)
+			{
+				if (event.mouseButton.button == sf::Mouse::Left && radiusFromHandler <= shapeHandler.getRadius())
+				{
+					shapeHandler.handlerIsActive();
+					shapeHandler.moveHandler(mousePosFromHandler);
+					shapeHandler.update();
+				}
+			}
+			else
+			{
+				shapeHandler.handlerIsNotActive();
+			}
 		}
 
 		window.clear();
-		window.draw(shape);
+		//window.draw(shape);
+		shapeHandler.draw(window);
 		window.draw(points,curveResolution, sf::LineStrip);
 		window.display();
 	}
 
 	return 0;
 }
-
-// zamieniæ to rownanie w bezierze na lerp
-// zrobiæ poprawnie dzia³aj¹ce przemieszczenie za pomoc¹ deltaTime

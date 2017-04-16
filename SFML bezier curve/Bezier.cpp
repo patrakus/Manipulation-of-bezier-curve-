@@ -1,11 +1,12 @@
 #include "BezierCurve.hpp"
 #include <iostream>
+#include "MathFunctions.hpp"
 
 bzc::Bezier::Bezier() : _resolution(8)
 {
 	_vertices = nullptr;
-	_controlPoints = new sf::Vector2f[3]{ { -100.f, 0.f },{ -100.f, -100.f },
-	{ 100.f, -100.f } };
+	_controlPoints = new sf::Vector2f[4]{ { -100.f, 0.f },{ -100.f, -100.f },
+	{ 100.f, -100.f },{ 100.f, 0.f } };
 }
 
 bzc::Bezier::Bezier(unsigned int curveResolution) : _resolution(curveResolution)
@@ -47,11 +48,14 @@ void bzc::Bezier::calculateCurve()
 	{
 		sf::Vector2f verticePos;
 		float temp = normalization(static_cast<float>(i));
+		sf::Vector2f* P = _controlPoints;
 
-		verticePos.x = ((1 - temp)*(1 - temp))*_controlPoints[0].x + 2 * (1 - temp)*temp*_controlPoints[1].x +
-			temp*temp*_controlPoints[2].x;
-		verticePos.y = ((1 - temp)*(1 - temp))*_controlPoints[0].y + 2 * (1 - temp)*temp*_controlPoints[1].y +
-			temp*temp*_controlPoints[2].y;
+
+		verticePos.x = bzc::pow<float>((1 - temp), 3.f) * P[0].x + 3 * bzc::pow<float>((1 - temp), 2.f)*temp*P[1].x
+			+ 3 * (1 - temp)*temp*temp*P[2].x + temp*temp*temp*P[3].x;
+
+		verticePos.y = bzc::pow<float>((1 - temp), 3.f) * P[0].y + 3 * bzc::pow<float>((1 - temp), 2.f)*temp*P[1].y
+			+ 3 * (1 - temp)*temp*temp*P[2].y + temp*temp*temp*P[3].y;
 
 		_vertices[i].position = verticePos;
 	}
