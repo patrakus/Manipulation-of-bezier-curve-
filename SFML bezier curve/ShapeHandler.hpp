@@ -51,4 +51,4 @@ namespace bzc
 	};
 }
 
-// przypomnieæ sobie o inlinie w klasach
+// przypomnieæ sobie o inline w klasach

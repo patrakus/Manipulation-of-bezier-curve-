@@ -34,6 +34,15 @@ int main()
 	shapeHandler.setLine(pointsSample[0], pointsSample[1]);
 	shapeHandler.setCircleHandler(pointsSample[1]);
 
+	bool moveHandler = false;
+
+	sf::StandardCursor cursor(sf::StandardCursor::NORMAL);
+	cursor.set(window.getSystemHandle());
+
+	bool changedCursor = false;
+
+	std::cout << shapeHandler.getRadius() << std::endl;
+
 	while (window.isOpen())
 	{
 
@@ -43,39 +52,56 @@ int main()
 			if (event.type == sf::Event::Closed)
 				window.close();
 
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-			{
-				/*std::cout << sf::Mouse::getPosition(window).x << " " <<
-					sf::Mouse::getPosition(window).y << std::endl;*/ // ---> sprawdziæ w kodzie api ró¿nice
+			sf::Vector2f mousePosInGlobal = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-				
-				//std::cout <<"Autorka konwersja wynosi " << "x: " <<mousePos->x << " y:" << mousePos->y<< std::endl;
-				//std::cout << std::endl;
-				/*std::cout << "Wersja dostarczona przez api wynosi x:" <<
-					window.mapPixelToCoords(sf::Mouse::getPosition()).x << " y:" <<
-					window.mapPixelToCoords(sf::Mouse::getPosition()).y << std::endl;*/
-			}
-
-			mousePos = &bzc::Mouse::viewToWorldSpace(sf::Mouse::getPosition(window),
-				fixed.getTransform(), window);
-
-			sf::Vector2f mousePosFromHandler = *mousePos - shapeHandler.getPosition();
+			
+			sf::Vector2f mousePosFromHandler = mousePosInGlobal - shapeHandler.getPosition();
 
 			float radiusFromHandler = mousePosFromHandler.x * mousePosFromHandler.x +
 				mousePosFromHandler.y * mousePosFromHandler.y;
+
+
+			//std::cout << mousePosInGlobal.x << " " << mousePosInGlobal.y << std::endl;
+			//std::cout << mousePosInGlobal.x << " " << mousePosInGlobal.y << std::endl;
+			//std::cout << testPos2.x <<" " <<testPos2.y << std::endl;
+			//std::cout << shapeHandler.getPosition().x << " " << shapeHandler.getPosition().y << std::endl;
+			//std::cout << std::endl;
+
+			if (radiusFromHandler <= shapeHandler.getRadius())
+			{
+				changedCursor = cursor.change(sf::StandardCursor::HAND);
+				cursor.set(window.getSystemHandle());
+				
+			}
+			else if (changedCursor)
+			{
+				cursor.change(sf::StandardCursor::NORMAL);
+				cursor.set(window.getSystemHandle());
+				changedCursor = false;
+			}
 
 			if (event.type == sf::Event::MouseButtonPressed)
 			{
 				if (event.mouseButton.button == sf::Mouse::Left && radiusFromHandler <= shapeHandler.getRadius())
 				{
-					shapeHandler.handlerIsActive();
-					shapeHandler.moveHandler(mousePosFromHandler);
-					shapeHandler.update();
+					moveHandler = true;
 				}
 			}
-			else
+			else if (event.type == sf::Event::MouseButtonReleased)
 			{
-				shapeHandler.handlerIsNotActive();
+				if (event.mouseButton.button == sf::Mouse::Left)
+				{
+					moveHandler = false;
+					shapeHandler.handlerIsNotActive();
+				}
+				
+			}
+
+			if (moveHandler)
+			{
+				shapeHandler.handlerIsActive();
+				shapeHandler.moveHandler(mousePosFromHandler);
+				shapeHandler.update();
 			}
 		}
 

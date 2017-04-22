@@ -8,7 +8,7 @@ namespace bzc
 	{
 	public:
 
-		static sf::Vector2f& viewToWorldSpace(sf::Vector2i mousePos, 
+		static sf::Vector2f& viewToWorldSpace(sf::Vector2f mousePos, 
 			const sf::Transform viewTransform, const sf::Window& window);
 
 	private:

@@ -4,6 +4,16 @@
 
 sf::StandardCursor::StandardCursor(const sf::StandardCursor::TYPE t)
 {
+	change(t);
+}
+
+void sf::StandardCursor::set(const sf::WindowHandle& aWindowHandle) const
+{
+	SetClassLongPtr(aWindowHandle, GCLP_HCURSOR, reinterpret_cast<LONG_PTR>(Cursor));
+}
+
+bool sf::StandardCursor::change(const TYPE t)
+{
 	switch (t)
 	{
 	case sf::StandardCursor::WAIT:
@@ -20,12 +30,11 @@ sf::StandardCursor::StandardCursor(const sf::StandardCursor::TYPE t)
 		break;
 		//For more cursor options on Windows go here:
 		// http://msdn.microsoft.com/en-us/library/ms648391%28v=vs.85%29.aspx
+	default:
+		return false;
 	}
-}
 
-void sf::StandardCursor::set(const sf::WindowHandle& aWindowHandle) const
-{
-	SetClassLongPtr(aWindowHandle, GCLP_HCURSOR, reinterpret_cast<LONG_PTR>(Cursor));
+	return true;
 }
 
 sf::StandardCursor::~StandardCursor()

@@ -33,6 +33,7 @@ namespace sf
 		enum TYPE {WAIT, TEXT, NORMAL, HAND};
 		StandardCursor(const TYPE t);
 		void set(const sf::WindowHandle& aWindowHandle) const;
+		bool change(const TYPE t);
 		~StandardCursor();
 	};
 }
