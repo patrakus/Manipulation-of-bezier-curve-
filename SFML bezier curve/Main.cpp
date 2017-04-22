@@ -5,7 +5,7 @@
 #include "BezierCurve.hpp"
 #include "FPS.hpp"
 #include "ShapeHandler.hpp"
-#include <math.h>
+#include <cmath>
 
 int main()
 {
@@ -57,14 +57,15 @@ int main()
 			
 			sf::Vector2f mousePosFromHandler = mousePosInGlobal - shapeHandler.getPosition();
 
-			float radiusFromHandler = mousePosFromHandler.x * mousePosFromHandler.x +
-				mousePosFromHandler.y * mousePosFromHandler.y;
+			float radiusFromHandler = sqrt( mousePosFromHandler.x * mousePosFromHandler.x +
+				mousePosFromHandler.y * mousePosFromHandler.y);
 
 
 			//std::cout << mousePosInGlobal.x << " " << mousePosInGlobal.y << std::endl;
-			//std::cout << mousePosInGlobal.x << " " << mousePosInGlobal.y << std::endl;
+			std::cout << mousePosInGlobal.x << " " << mousePosInGlobal.y << std::endl;
 			//std::cout << testPos2.x <<" " <<testPos2.y << std::endl;
-			//std::cout << shapeHandler.getPosition().x << " " << shapeHandler.getPosition().y << std::endl;
+			std::cout << shapeHandler.getPosition().x << " " << shapeHandler.getPosition().y << std::endl;
+			std::cout << radiusFromHandler << std::endl;
 			//std::cout << std::endl;
 
 			if (radiusFromHandler <= shapeHandler.getRadius())
